@@ -7,6 +7,7 @@
 enum { BUTZ, LENNA, GALUF, FARIS, CARA, NONE=0xFF };
 
 // character mask
+#define GENDER   0X08
 #define DISABLED 0x40
 #define BACKROW  0x80
 
@@ -28,7 +29,7 @@ enum { NONE, OTHER, ITEM, ROW, DEF, FIGHT, GUARD, KICK, BUILD_UP,
        DIMEN, DIMEN, DIMEN, SUMMON, SUMMON, SUMMON, SUMMON, SUMMON, 
        RED, RED, RED, XMAGIC, BLUE };
 
-// status
+// status 01 - Cureable
 #define BLIND  0x01
 #define ZOMBIE 0x02
 #define POISON 0x04
@@ -38,6 +39,37 @@ enum { NONE, OTHER, ITEM, ROW, DEF, FIGHT, GUARD, KICK, BUILD_UP,
 #define STONE  0x40
 #define DEAD   0x80
 
+// status 02 - Temporary
+#define IMAGE1 0x01
+#define IMAGE2 0x02
+#define MUTE   0x04
+#define BERSRK 0x08
+#define CHARM  0x10
+#define HALT   0x20
+#define SLEEP  0x40
+#define AGING  0x80
+
+// status 03 - Dispellable
+#define REGEN  0x01
+#define INVUL  0x02
+#define SLOW   0x04
+#define HASTE  0x08
+#define STOP   0x10
+#define SHELL  0x20
+#define ARMOR  0x40
+#define WALL   0x80
+
+// status 04 - Permanent
+#define HIDDEN 0x01
+#define PERIL  0x02
+#define SING   0x04
+#define LEAK   0x08
+#define COUNT  0x10
+#define CTRL   0x20
+#define FALSE  0x40
+#define ERASED 0x80
+
+
 typedef struct _CharState
 {
     u8          character;
@@ -46,41 +78,58 @@ typedef struct _CharState
     u24         experience;
     u16         hp, hp_max;     // 9999 max
     u16         mp, mp_max;     // 9999 max
-    u8          head, body;     // equipment
-
-    u8          relic;
-    u8          rhand1, lhand1;   // equipment
-    u8          rhand2, lhand2;  // worn in battle, overrides L/R 1
-    u8          unk8;           // Catch / can equip?
-    u8          ability[4];
-    u8          status;         // +0x1a
-    u8          unk[5];
-
-    u8          unk[3];         // generated
-    u8          weight?;        // generated based on equipment 
-    u8          strength;       // 99 max, affected by aging 
-    u8          agility;        // 99 max, affected by aging 
-    u8          vitality;       // 99 max, affected by aging 
-    u8          mag_power;      // 99 max, affected by aging 
-    u8          strength_max;
-    u8          agility_max;
-    u8          vitality_max;
-    u8          mag_power_max;
-    u8          evade?;          // generated based on equipment 
-    u8          defense;        // generated based on equipment
-    u8          mag_evade?;     // generated based on equipment
-    u8          mag_defense;    // generated based on equipment
     
-    u8          unk[4];         // generated
-    u8          unk;            // generated
-    u8          unk[3];
-    u8          unk[2];         // generated
+    u8          head, body;     // equipment
+    u8          relic;
+    u8          rhand1, lhand1; // Shields
+    u8          rhand2, lhand2; // Weapons, overrides L/R hand1
+    
+    u8          caught;         // Monster caught
+    
+    u8          ability[4];     // Command abilities
+    
+    u8          status1;        // Cureable Status
+    u8          status2;        // Temporary Status
+    u8          status3;        // Dispellable Status
+    u8          status4;        // Permanent Status
+    
+    u8          unk[2];         // Actions Flags & Damage mod??
+    
+    u16         innate;         // Innate Abilities, like Pre-entive, Dash, etc.
+
+    u8          mag_element;    // Magic Element Up
+    
+    u8          weight;         // Equipment weight
+
+    u8          strength;       // Base (99 max), affected by aging 
+    u8          agility;        // Base (99 max), affected by aging 
+    u8          vitality;       // Base (99 max), affected by aging 
+    u8          mag_power;      // Base (99 max), affected by aging 
+    u8          strength_max;   // Current Strenght
+    u8          agility_max;    // Current Agility
+    u8          vitality_max;   // Current Vitality
+    u8          mag_power_max;  // Current Magic Power
+    u8          evade;          // %Evade
+    u8          defense;        // Defense
+    u8          mag_evade;      // %Magic Evade
+    u8          mag_defense;    // Magic Defense
+    
+    u8          el_absorb;      // Elemental Absorb
+    u8          el_unk;         // Elemental ?
+    u8          el_immune;      // Elemental Immunity
+    u8          el_half;        // Elemental Half
+    u8          el_weak;        // Elemental Weakness
+
+    u8          unk[3];         // Related to status immunities?
+    
+    u8          weapon_special; // Specialty used in weapons, like: Wonder Rod, Magic Sword OK, Parry, etc
+    u8          equip_special;  // Equipment Specialty, like: Catch Up, Steal Up, Half MP, etc
+    
     u8          job_level;
     u16         abp;            // 999 max
     u8          unk[3];         // generated
 
     u8          can_equip[4];   // generated, based on job
-    u8          attack;         // generated based on equipment
-    u8          unk;            // generated
+    u16         attack;         // generated based on equipment
     u8          unk[10];        // padding?    
 } CharState;
